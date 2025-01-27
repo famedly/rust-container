@@ -27,7 +27,7 @@ jobs:
   publish_release:
     if: github.event.pull_request.merged == true
     needs: set_date
-    uses: famedly/github-workflows/.github/workflows/docker.yml@49401388492ed7fe3eeb13fbefacf68168e9bc64
+    uses: famedly/github-workflows/.github/workflows/docker.yml@main
     with:
       push: true
       image_name: rust-container
@@ -43,7 +43,7 @@ jobs:
   publish_dev:
     if: github.event.pull_request.merged != true
     needs: set_date
-    uses: famedly/github-workflows/.github/workflows/docker.yml@49401388492ed7fe3eeb13fbefacf68168e9bc64
+    uses: famedly/github-workflows/.github/workflows/docker.yml@main
     with:
       push: true
       image_name: rust-container
