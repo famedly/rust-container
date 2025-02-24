@@ -25,7 +25,7 @@ jobs:
         run: echo "today=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
 
   publish_release:
-    if: github.event.pull_request.merged == true
+    if: github.ref == 'refs/heads/main'
     needs: set_date
     uses: famedly/github-workflows/.github/workflows/docker.yml@main
     with:
@@ -41,7 +41,7 @@ jobs:
     secrets: inherit
 
   publish_dev:
-    if: github.event.pull_request.merged != true
+    if: github.ref != 'refs/heads/main'
     needs: set_date
     uses: famedly/github-workflows/.github/workflows/docker.yml@main
     with:
