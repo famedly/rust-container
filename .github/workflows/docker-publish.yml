@@ -2,13 +2,13 @@ name: Docker
 
 on:
   schedule:
-    - cron: '30 1 * * 1' # run every Monday at 01:30
+    - cron: "30 1 * * 1" # run every Monday at 01:30
   workflow_dispatch:
   push:
-    branches: [ "*" ]
-    tags: [ "*" ]
+    branches: ["*"]
+    tags: ["*"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 # Make sure there is no pipeline running uselessly.
 concurrency:
@@ -57,3 +57,80 @@ jobs:
       registry: docker-nightly.nexus.famedly.de
       registry_user: ${{ vars.NEXUS_REGISTRY_USER }}
     secrets: inherit
+
+  publish_ghcr_release:
+    if: github.ref == 'refs/heads/main'
+    needs: set_date
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/rust-container
+          tags: |
+            type=raw,value=nightly
+            type=raw,value=nightly-${{needs.set_date.outputs.date_today}}
+            type=raw,value=latest
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            NIGHTLY_VERSION_DATE=${{needs.set_date.outputs.date_today}}
+
+  publish_ghcr_dev:
+    if: github.ref != 'refs/heads/main'
+    needs: set_date
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/rust-container
+          tags: |
+            type=ref,event=branch,prefix=dev-
+            type=ref,event=tag,prefix=dev-
+            type=raw,event=pr,value=dev-${{ github.head_ref }}
+            type=sha,prefix=dev-
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            NIGHTLY_VERSION_DATE=${{needs.set_date.outputs.date_today}}
