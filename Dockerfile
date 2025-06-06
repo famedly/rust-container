@@ -23,5 +23,6 @@ RUN apt update -yqq \
      && cargo install cargo-audit \
      && cargo install cargo-auditable \
      && cargo install cargo-license \
+     && cargo install taplo-cli \
      && cargo cache -a
 COPY cobertura_transform.xslt /opt/
