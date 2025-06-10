@@ -1,29 +1,43 @@
-FROM docker.io/rust:bookworm
+FROM docker.io/rust:slim-bookworm
 
 ARG NIGHTLY_VERSION_DATE
 ENV NIGHTLY_VERSION=nightly-$NIGHTLY_VERSION_DATE
 
-RUN apt update -yqq \
-     && apt install -yqq --no-install-recommends \
-     build-essential cmake libssl-dev pkg-config git musl-tools jq xmlstarlet lcov protobuf-compiler libprotobuf-dev libprotoc-dev nats-server \
-     && rustup toolchain add $NIGHTLY_VERSION --component rustfmt --component clippy --component llvm-tools-preview \
-     && rustup toolchain add beta --component rustfmt --component clippy --component llvm-tools-preview \
-     && rustup toolchain add stable --component rustfmt --component clippy --component llvm-tools-preview \
-     && rustup default stable \
-     && cargo install grcov \
-                      cargo-cache \
-                      cargo-llvm-cov \
-                      cargo-deny \
-                      sqlx-cli \
-                      typos-cli \
-                      conventional_commits_linter \
-                      cargo-udeps \
-                      cargo-nextest \
-                      cargo-readme \
-                      cargo-audit \
-                      cargo-auditable \
-                      cargo-license \
-                      taplo-cli \
-                      cargo-chef \
-     && cargo cache -a
-COPY cobertura_transform.xslt /opt/
+# apt dependencies
+## Run in one layer to avoid caching issues
+RUN apt update -yqq && apt install -yqq --no-install-recommends \
+     build-essential \
+     cmake \
+     git \
+     jq \
+     lcov \
+     libprotobuf-dev \
+     libprotoc-dev \
+     libssl-dev \
+     musl-tools \
+     nats-server \
+     pkg-config \
+     protobuf-compiler \
+     yq \
+     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# cargo dependencies
+RUN cargo install cargo-binstall --locked && cargo binstall --locked --no-confirm --disable-telemetry \
+     cargo-audit \
+     cargo-auditable \
+     cargo-cache \
+     cargo-chef \
+     cargo-deny \
+     cargo-llvm-cov \
+     cargo-nextest \
+     cargo-udeps \
+     sqlx-cli \
+     taplo-cli \
+     typos-cli \
+     && cargo cache --autoclean
+
+# rustup dependencies
+## added to default stable toolchain
+RUN rustup component add clippy llvm-tools-preview
+## add nightly toolchain
+RUN rustup toolchain add $NIGHTLY_VERSION --component rustfmt --component clippy
