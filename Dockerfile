@@ -11,18 +11,19 @@ RUN apt update -yqq \
      && rustup toolchain add stable --component rustfmt --component clippy --component llvm-tools-preview \
      && rustup default stable \
      && cargo install grcov \
-     && cargo install cargo-cache \
-     && cargo install cargo-llvm-cov \
-     && cargo install cargo-deny \
-     && cargo install sqlx-cli \
-     && cargo install typos-cli \
-     && cargo install conventional_commits_linter \
-     && cargo install cargo-udeps --locked \
-     && cargo install cargo-nextest \
-     && cargo install cargo-readme \
-     && cargo install cargo-audit \
-     && cargo install cargo-auditable \
-     && cargo install cargo-license \
-     && cargo install taplo-cli \
+                      cargo-cache \
+                      cargo-llvm-cov \
+                      cargo-deny \
+                      sqlx-cli \
+                      typos-cli \
+                      conventional_commits_linter \
+                      cargo-udeps \
+                      cargo-nextest \
+                      cargo-readme \
+                      cargo-audit \
+                      cargo-auditable \
+                      cargo-license \
+                      taplo-cli \
+                      cargo-chef \
      && cargo cache -a
 COPY cobertura_transform.xslt /opt/
