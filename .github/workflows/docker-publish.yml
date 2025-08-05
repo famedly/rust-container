@@ -36,8 +36,8 @@ jobs:
         type=raw,value=nightly-${{needs.set_date.outputs.date_today}}
       build_args: |
         NIGHTLY_VERSION_DATE=${{needs.set_date.outputs.date_today}}
-      registry: docker-oss.nexus.famedly.de
-      registry_user: ${{ vars.NEXUS_REGISTRY_USER }}
+      registry: registry.famedly.net/docker-oss
+      registry_user: ${{ vars.REGISTRY_USER }}
     secrets: inherit
 
   publish_dev:
@@ -54,8 +54,8 @@ jobs:
         type=sha,prefix=dev-
       build_args: |
         NIGHTLY_VERSION_DATE=${{needs.set_date.outputs.date_today}}
-      registry: docker-nightly.nexus.famedly.de
-      registry_user: ${{ vars.NEXUS_REGISTRY_USER }}
+      registry: registry.famedly.net/nightly
+      registry_user: ${{ vars.REGISTRY_USER }}
     secrets: inherit
 
   publish_ghcr_release:

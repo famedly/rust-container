@@ -8,6 +8,7 @@ ENV NIGHTLY_VERSION=nightly-$NIGHTLY_VERSION_DATE
 RUN apt update -yqq && apt install -yqq --no-install-recommends \
      build-essential \
      cmake \
+     curl \
      git \
      jq \
      lcov \
