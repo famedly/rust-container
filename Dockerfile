@@ -12,6 +12,7 @@ RUN apt update -yqq && apt install -yqq --no-install-recommends \
      git \
      jq \
      lcov \
+     openssh-client \
      libprotobuf-dev \
      libprotoc-dev \
      libssl-dev \
