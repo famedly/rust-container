@@ -1,4 +1,4 @@
-FROM docker.io/rust:slim-bookworm
+FROM docker.io/rust:trixie
 
 ARG NIGHTLY_VERSION_DATE
 ENV NIGHTLY_VERSION=nightly-$NIGHTLY_VERSION_DATE
