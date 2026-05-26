@@ -27,7 +27,7 @@ jobs:
   publish_release:
     if: github.ref == 'refs/heads/main'
     needs: set_date
-    uses: famedly/github-workflows/.github/workflows/docker.yml@main
+    uses: famedly/github-workflows/.github/workflows/docker.yml@57b383862ba81dfa265bb33d492e2bbcbc96891d
     with:
       push: true
       image_name: rust-container
@@ -43,7 +43,7 @@ jobs:
   publish_dev:
     if: github.ref != 'refs/heads/main'
     needs: set_date
-    uses: famedly/github-workflows/.github/workflows/docker.yml@main
+    uses: famedly/github-workflows/.github/workflows/docker.yml@57b383862ba81dfa265bb33d492e2bbcbc96891d
     with:
       push: true
       image_name: rust-container
@@ -67,7 +67,7 @@ jobs:
       packages: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@900f2210b1d28bbbd0bd22d17926b9e224e8f231
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@2ff7bc63ffa51414f77e9cbeea0d3297c1672d2e
@@ -105,7 +105,7 @@ jobs:
       packages: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@900f2210b1d28bbbd0bd22d17926b9e224e8f231
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@2ff7bc63ffa51414f77e9cbeea0d3297c1672d2e
